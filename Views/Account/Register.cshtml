@@ -1,0 +1,137 @@
+@model ParkEasePro.Models.ViewModels.RegisterViewModel
+@{
+    ViewData["Title"] = "Create an Account — AuraMart";
+    var returnUrl = ViewData["ReturnUrl"] as string;
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+                <div class="card-body p-4 p-md-5">
+                    <!-- Header -->
+                    <div class="text-center mb-4">
+                        <div class="d-inline-flex align-items-center justify-content-center bg-success-subtle text-success rounded-circle mb-3" style="width: 56px; height: 56px;">
+                            <i class="bi bi-person-plus-fill fs-2"></i>
+                        </div>
+                        <h3 class="fw-bold text-dark mb-1">Create Your Account</h3>
+                        <p class="text-muted small">Join AuraMart for exclusive discounts, order tracking, and fast checkout</p>
+                    </div>
+
+                    <!-- 1-Click Google Sign Up Button -->
+                    <form asp-action="ExternalLogin" method="post" class="mb-3">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="provider" value="Google" />
+                        <input type="hidden" name="returnUrl" value="@returnUrl" />
+                        <button type="submit" class="btn btn-outline-secondary w-100 py-2 d-flex align-items-center justify-content-center gap-3 rounded-pill fw-semibold shadow-sm hover-shadow bg-white border">
+                            <svg width="20" height="20" viewBox="0 0 48 48">
+                                <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+                                <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+                                <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+                                <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+                            </svg>
+                            <span>Sign up with Google</span>
+                        </button>
+                    </form>
+
+                    <div class="position-relative text-center my-4">
+                        <hr class="text-muted opacity-25 m-0" />
+                        <span class="position-absolute top-50 start-50 translate-middle bg-white px-3 text-muted small fw-medium">
+                            or register with email
+                        </span>
+                    </div>
+
+                    <!-- Email & Password Form -->
+                    <form asp-action="Register" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="ReturnUrl" />
+
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small rounded-3 mb-3" role="alert"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="FullName" class="form-label small fw-semibold text-secondary"></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-person"></i></span>
+                                <input asp-for="FullName" class="form-control bg-light border-start-0" placeholder="e.g. John Doe" />
+                            </div>
+                            <span asp-validation-for="FullName" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Email" class="form-label small fw-semibold text-secondary"></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-envelope"></i></span>
+                                <input asp-for="Email" class="form-control bg-light border-start-0" placeholder="name@example.com" />
+                            </div>
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+
+                        <div class="row g-2 mb-3">
+                            <div class="col-sm-6">
+                                <label asp-for="Password" class="form-label small fw-semibold text-secondary"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-key"></i></span>
+                                    <input asp-for="Password" class="form-control bg-light border-start-0" placeholder="••••••••" />
+                                </div>
+                                <span asp-validation-for="Password" class="text-danger small"></span>
+                            </div>
+                            <div class="col-sm-6">
+                                <label asp-for="ConfirmPassword" class="form-label small fw-semibold text-secondary"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-shield-check"></i></span>
+                                    <input asp-for="ConfirmPassword" class="form-control bg-light border-start-0" placeholder="••••••••" />
+                                </div>
+                                <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <!-- Optional Profile Details Collapse -->
+                        <div class="mb-3">
+                            <a class="text-decoration-none small fw-semibold text-success d-inline-flex align-items-center gap-1" data-bs-toggle="collapse" href="#deliveryDetails" role="button">
+                                <i class="bi bi-geo-alt"></i> Add Delivery Address (Optional)
+                            </a>
+                            <div class="collapse mt-2" id="deliveryDetails">
+                                <div class="p-3 bg-light rounded-3 border">
+                                    <div class="mb-2">
+                                        <label asp-for="PhoneNumber" class="form-label small text-muted mb-1"></label>
+                                        <input asp-for="PhoneNumber" class="form-control form-control-sm" placeholder="+91 98765 43210" />
+                                        <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                                    </div>
+                                    <div class="mb-2">
+                                        <label asp-for="Address" class="form-label small text-muted mb-1"></label>
+                                        <input asp-for="Address" class="form-control form-control-sm" placeholder="Flat, Building, Street" />
+                                    </div>
+                                    <div class="row g-2">
+                                        <div class="col-7">
+                                            <label asp-for="City" class="form-label small text-muted mb-1"></label>
+                                            <input asp-for="City" class="form-control form-control-sm" placeholder="City" />
+                                        </div>
+                                        <div class="col-5">
+                                            <label asp-for="PostalCode" class="form-label small text-muted mb-1"></label>
+                                            <input asp-for="PostalCode" class="form-control form-control-sm" placeholder="PIN Code" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100 py-2 rounded-pill fw-semibold shadow-sm mt-2">
+                            <i class="bi bi-person-check-fill me-1"></i> Complete Registration
+                        </button>
+                    </form>
+                </div>
+
+                <div class="card-footer bg-light border-0 py-3 text-center">
+                    <span class="small text-muted">Already have an AuraMart account?</span>
+                    <a asp-action="Login" asp-route-returnUrl="@returnUrl" class="small fw-bold text-success text-decoration-none ms-1">
+                        Sign In
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,225 @@
+@model ParkEasePro.Models.ViewModels.CheckoutViewModel
+@{
+    ViewData["Title"] = "Secure Checkout";
+}
+
+<div class="container py-4">
+    <div class="mb-4">
+        <h2 class="fw-bold mb-1"><i class="bi bi-shield-check text-success me-2"></i>Secure Checkout</h2>
+        <p class="text-muted small mb-0">Complete your shipping address and select a payment method.</p>
+    </div>
+
+    <form asp-action="PlaceOrder" method="post">
+        @Html.AntiForgeryToken()
+
+        <div class="row g-4">
+            <!-- Left Column: Shipping & Payment -->
+            <div class="col-lg-8">
+                <!-- Shipping Address Card -->
+                <div class="card border-0 shadow-sm p-4 bg-white mb-4">
+                    <h5 class="fw-bold text-dark mb-3"><i class="bi bi-geo-alt-fill text-success me-2"></i>1. Shipping Destination</h5>
+
+                    <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label asp-for="FullName" class="form-label small fw-bold text-dark"></label>
+                            <input asp-for="FullName" class="form-control" placeholder="Aarav Sharma" required />
+                            <span asp-validation-for="FullName" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="Phone" class="form-label small fw-bold text-dark"></label>
+                            <input asp-for="Phone" class="form-control" placeholder="+91 98765 43210" required />
+                            <span asp-validation-for="Phone" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-12">
+                            <label asp-for="Address" class="form-label small fw-bold text-dark"></label>
+                            <input asp-for="Address" class="form-control" placeholder="Flat / House No., Building Name, Street / Road" required />
+                            <span asp-validation-for="Address" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="City" class="form-label small fw-bold text-dark"></label>
+                            <input asp-for="City" class="form-control" placeholder="Surat" required />
+                            <span asp-validation-for="City" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label asp-for="PostalCode" class="form-label small fw-bold text-dark"></label>
+                            <input asp-for="PostalCode" class="form-control mono-font" placeholder="395007" required />
+                            <span asp-validation-for="PostalCode" class="text-danger small"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Interactive Payment Method Gateway Card -->
+                <div class="card border-0 shadow-sm p-4 bg-white">
+                    <h5 class="fw-bold text-dark mb-3"><i class="bi bi-credit-card-2-front-fill text-success me-2"></i>2. Payment Method Gateway (Simulated)</h5>
+
+                    <!-- Method Selection Radios -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-4">
+                            <label class="card p-3 border rounded-3 cursor-pointer h-100 payment-option-card active" for="payUPI">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" asp-for="SelectedPaymentMethod" value="UPI" id="payUPI" checked onchange="togglePaymentTabs('upi')">
+                                    <span class="form-check-label fw-bold d-block text-dark">Instant UPI</span>
+                                    <span class="small text-muted">Google Pay / PhonePe</span>
+                                </div>
+                            </label>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="card p-3 border rounded-3 cursor-pointer h-100 payment-option-card" for="payCard">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" asp-for="SelectedPaymentMethod" value="CreditDebitCard" id="payCard" onchange="togglePaymentTabs('card')">
+                                    <span class="form-check-label fw-bold d-block text-dark">Credit / Debit Card</span>
+                                    <span class="small text-muted">Visa, Mastercard, RuPay</span>
+                                </div>
+                            </label>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="card p-3 border rounded-3 cursor-pointer h-100 payment-option-card" for="payCOD">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" asp-for="SelectedPaymentMethod" value="CashOnDelivery" id="payCOD" onchange="togglePaymentTabs('cod')">
+                                    <span class="form-check-label fw-bold d-block text-dark">Cash on Delivery</span>
+                                    <span class="small text-muted">Pay at doorstep</span>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- UPI Details Tab -->
+                    <div id="tab-upi" class="p-3 bg-light rounded-3 border">
+                        <div class="row align-items-center g-3">
+                            <div class="col-md-8">
+                                <label asp-for="UpiId" class="form-label small fw-bold text-dark"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-white"><i class="bi bi-upc-scan"></i></span>
+                                    <input asp-for="UpiId" class="form-control" placeholder="e.g. yourname@oksbi" value="student@okhdfcbank" />
+                                </div>
+                                <span class="small text-muted mt-1 d-block">Pre-filled with simulated student VPA for quick evaluation testing.</span>
+                            </div>
+                            <div class="col-md-4 text-center">
+                                <div class="p-2 bg-white rounded border d-inline-block shadow-sm">
+                                    <i class="bi bi-qr-code fs-1 text-dark"></i>
+                                    <span class="d-block small text-muted font-monospace" style="font-size: 10px;">SCAN TO PAY</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Card Details Tab -->
+                    <div id="tab-card" class="p-3 bg-light rounded-3 border d-none">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="small fw-bold text-dark">Card Details</span>
+                            <button type="button" class="btn btn-sm btn-outline-primary py-0" onclick="fillTestCard()">
+                                <i class="bi bi-magic"></i> Auto-fill Demo Card
+                            </button>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Card Number</label>
+                                <input type="text" id="demoCardNum" class="form-control mono-font" placeholder="4242 &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; 4242" value="4242 4242 4242 4242" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small fw-bold">Name on Card</label>
+                                <input type="text" id="demoCardName" class="form-control" placeholder="Aarav Sharma" value="Aarav Sharma" />
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <label class="form-label small fw-bold">Expiry Date</label>
+                                <input type="text" id="demoCardExp" class="form-control mono-font" placeholder="12/28" value="12/28" />
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <label class="form-label small fw-bold">CVV</label>
+                                <input type="password" id="demoCardCvv" class="form-control mono-font" placeholder="123" value="789" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- COD Details Tab -->
+                    <div id="tab-cod" class="p-3 bg-light rounded-3 border d-none">
+                        <div class="d-flex align-items-center gap-3">
+                            <i class="bi bi-cash-stack fs-1 text-success"></i>
+                            <div>
+                                <h6 class="fw-bold mb-1">Pay Cash Upon Delivery</h6>
+                                <p class="small text-muted mb-0">Please keep exact change ready when our delivery courier arrives at your address.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Order Review Summary -->
+            <div class="col-lg-4">
+                <div class="card border-0 shadow-sm p-4 bg-white sticky-top" style="top: 85px;">
+                    <h5 class="fw-bold text-dark mb-3">Order Summary</h5>
+
+                    <div class="d-flex flex-column gap-2 mb-3" style="max-height: 240px; overflow-y: auto;">
+                        @foreach (var item in Model.Cart.Items)
+                        {
+                            <div class="d-flex align-items-center justify-content-between small">
+                                <div class="d-flex align-items-center gap-2 text-truncate pe-2">
+                                    <span class="badge bg-light text-dark border">@item.Quantity x</span>
+                                    <span class="text-truncate">@item.Product.Name</span>
+                                </div>
+                                <span class="fw-semibold text-dark text-nowrap">₹@item.SubTotal.ToString("0.00")</span>
+                            </div>
+                        }
+                    </div>
+
+                    <hr class="my-2" />
+
+                    <div class="d-flex justify-content-between small mb-1">
+                        <span class="text-muted">Subtotal:</span>
+                        <span class="fw-semibold text-dark">₹@Model.Cart.SubTotal.ToString("0.00")</span>
+                    </div>
+
+                    @if (Model.Cart.DiscountAmount > 0)
+                    {
+                        <div class="d-flex justify-content-between small mb-1 text-success">
+                            <span>Discount:</span>
+                            <span class="fw-bold">- ₹@Model.Cart.DiscountAmount.ToString("0.00")</span>
+                        </div>
+                    }
+
+                    <div class="d-flex justify-content-between small mb-3">
+                        <span class="text-muted">Shipping:</span>
+                        <span class="text-success fw-bold">@(Model.Cart.ShippingFee == 0 ? "FREE" : "₹" + Model.Cart.ShippingFee.ToString("0.00"))</span>
+                    </div>
+
+                    <div class="p-3 bg-success-subtle text-success rounded-3 mb-4">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span class="fw-bold">Total to Pay:</span>
+                            <span class="fs-4 fw-extrabold">₹@Model.Cart.GrandTotal.ToString("0.00")</span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-success btn-lg w-100 rounded-pill shadow d-flex align-items-center justify-content-center gap-2">
+                        <i class="bi bi-lock-fill"></i> Pay ₹@Model.Cart.GrandTotal.ToString("0.00") &amp; Place Order
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function togglePaymentTabs(mode) {
+            document.getElementById('tab-upi').classList.add('d-none');
+            document.getElementById('tab-card').classList.add('d-none');
+            document.getElementById('tab-cod').classList.add('d-none');
+
+            document.getElementById('tab-' + mode).classList.remove('d-none');
+        }
+
+        function fillTestCard() {
+            document.getElementById('demoCardNum').value = '4532 8912 3456 7890';
+            document.getElementById('demoCardName').value = 'Aarav Sharma';
+            document.getElementById('demoCardExp').value = '08/29';
+            document.getElementById('demoCardCvv').value = '542';
+        }
+    </script>
+}

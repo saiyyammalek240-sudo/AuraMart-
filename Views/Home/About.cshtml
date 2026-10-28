@@ -1,0 +1,77 @@
+@{
+    ViewData["Title"] = "About AuraMart";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card border-0 shadow-sm p-4 p-md-5 bg-white">
+                <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill bg-success-subtle text-success border border-success-subtle small fw-bold mb-3 align-self-start">
+                    <i class="bi bi-info-circle-fill"></i> Project Overview
+                </div>
+                <h1 class="fw-bold mb-3">About AuraMart</h1>
+                <p class="lead text-muted">
+                    AuraMart is a full-stack, enterprise-grade E-Commerce Store designed for modern lifestyle tech, studio audio, and mechanical peripherals. Built as a 5th-semester project for <strong>Web Technologies with .NET</strong>.
+                </p>
+
+                <hr class="my-4" />
+
+                <h4 class="fw-bold mb-3"><i class="bi bi-cpu text-success me-2"></i>Technical Architecture &amp; Stack</h4>
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded-3 border">
+                            <h6 class="fw-bold text-dark"><i class="bi bi-layers-fill text-success"></i> Backend &amp; ORM</h6>
+                            <ul class="small text-muted mb-0 ps-3">
+                                <li>ASP.NET Core 8.0 MVC (C#)</li>
+                                <li>Entity Framework Core with SQLite/SQL Server</li>
+                                <li>Code-First Schema &amp; Automatic Startup Seeder</li>
+                                <li>ASP.NET Core Identity (Role-Based Authorization)</li>
+                                <li>Session-backed Cart &amp; Promotional Coupon Engine</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 bg-light rounded-3 border">
+                            <h6 class="fw-bold text-dark"><i class="bi bi-palette-fill text-primary"></i> UI/UX Design System</h6>
+                            <ul class="small text-muted mb-0 ps-3">
+                                <li>UI/UX Pro Max Design System &amp; Design Dials</li>
+                                <li>WCAG AA Contrast Compliant Palette (Emerald &amp; Orange CTA)</li>
+                                <li>Bootstrap 5.3 + SVG Iconography (No emoji icons)</li>
+                                <li>Chart.js Revenue &amp; Inventory Analytics</li>
+                                <li>Printable Computer-Generated Tax Invoices</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <h4 class="fw-bold mb-3"><i class="bi bi-shield-check text-success me-2"></i>Evaluation User Accounts</h4>
+                <div class="table-responsive">
+                    <table class="table table-bordered small">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Role</th>
+                                <th>Email</th>
+                                <th>Password</th>
+                                <th>Capabilities</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="badge bg-danger">Admin</span></td>
+                                <td><code>admin@auramart.com</code></td>
+                                <td><code>Admin@123</code></td>
+                                <td>Executive sales telemetry, product catalog CRUD, order fulfillment &amp; CSV export</td>
+                            </tr>
+                            <tr>
+                                <td><span class="badge bg-success">Customer</span></td>
+                                <td><code>customer@auramart.com</code></td>
+                                <td><code>Customer@123</code></td>
+                                <td>Browse catalog, apply discount coupons, simulated checkout gateway, tax invoice view</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

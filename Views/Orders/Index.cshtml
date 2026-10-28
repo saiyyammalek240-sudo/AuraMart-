@@ -1,0 +1,84 @@
+@model List<ParkEasePro.Models.Order>
+@{
+    ViewData["Title"] = "My Orders History";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1"><i class="bi bi-box-seam text-success me-2"></i>My Orders</h2>
+            <p class="text-muted small mb-0">Track shipments, download invoices, and inspect purchase receipts.</p>
+        </div>
+        <a asp-controller="Shop" asp-action="Index" class="btn btn-outline-success btn-sm rounded-pill px-3">
+            Browse Store
+        </a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="card border-0 shadow-sm p-5 text-center my-4 bg-white">
+            <div class="rounded-circle bg-light text-muted mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 70px; height: 70px; font-size: 2rem;">
+                <i class="bi bi-bag-x"></i>
+            </div>
+            <h5 class="fw-bold">No orders placed yet</h5>
+            <p class="text-muted small">You haven't placed any orders with this account.</p>
+            <div>
+                <a asp-controller="Shop" asp-action="Index" class="btn btn-success rounded-pill px-4">
+                    Start Shopping
+                </a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="d-flex flex-column gap-3">
+            @foreach (var order in Model)
+            {
+                <div class="card border-0 shadow-sm p-4 bg-white">
+                    <div class="d-flex flex-wrap justify-content-between align-items-center pb-3 border-bottom mb-3 gap-2">
+                        <div>
+                            <span class="small text-muted d-block">ORDER REFERENCE</span>
+                            <span class="mono-font fw-extrabold text-dark fs-5">@order.OrderNumber</span>
+                        </div>
+                        <div>
+                            <span class="small text-muted d-block">DATE PLACED</span>
+                            <span class="fw-semibold text-dark small">@order.OrderDate.ToString("dd MMM yyyy, hh:mm tt")</span>
+                        </div>
+                        <div>
+                            <span class="small text-muted d-block">TOTAL AMOUNT</span>
+                            <span class="fw-extrabold text-success fs-5">₹@order.GrandTotal.ToString("0.00")</span>
+                        </div>
+                        <div>
+                            <span class="badge @(order.Status == ParkEasePro.Models.OrderStatus.Delivered ? "bg-success" : order.Status == ParkEasePro.Models.OrderStatus.Shipped ? "bg-info text-dark" : "bg-warning text-dark") rounded-pill px-3 py-2">
+                                @order.Status
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="row align-items-center g-3">
+                        <div class="col-md-8">
+                            <div class="d-flex flex-wrap gap-2">
+                                @foreach (var item in order.Items)
+                                {
+                                    <div class="d-flex align-items-center gap-2 p-1 bg-light rounded border pe-2">
+                                        <img src="@item.ProductImageUrl" alt="@item.ProductName" class="rounded" style="width: 32px; height: 32px; object-fit: cover;" />
+                                        <span class="small fw-semibold text-truncate" style="max-width: 180px;">@item.ProductName</span>
+                                        <span class="badge bg-secondary-subtle text-secondary small">x@item.Quantity</span>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-md-end">
+                            <a asp-action="Details" asp-route-id="@order.Id" class="btn btn-outline-secondary btn-sm rounded-pill px-3 me-2">
+                                Track Order
+                            </a>
+                            <a asp-action="Invoice" asp-route-id="@order.Id" class="btn btn-outline-success btn-sm rounded-pill px-3">
+                                <i class="bi bi-printer"></i> Tax Invoice
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

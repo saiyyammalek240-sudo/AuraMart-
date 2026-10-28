@@ -1,0 +1,210 @@
+@model ParkEasePro.Models.Product
+@{
+    ViewData["Title"] = Model.Name;
+    var related = ViewBag.RelatedProducts as List<ParkEasePro.Models.Product> ?? new List<ParkEasePro.Models.Product>();
+}
+
+<div class="container py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb small">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Shop" asp-action="Index">Shop</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Shop" asp-action="Index" asp-route-categoryId="@Model.CategoryId">@Model.Category.Name</a></li>
+            <li class="breadcrumb-item active text-truncate" style="max-width: 300px;">@Model.Name</li>
+        </ol>
+    </nav>
+
+    <!-- Main Product Section -->
+    <div class="card border-0 shadow-sm p-4 p-md-5 bg-white mb-5">
+        <div class="row g-5">
+            <!-- Product Gallery / Image -->
+            <div class="col-lg-6 text-center">
+                <div class="rounded-4 overflow-hidden border bg-light p-3 position-relative">
+                    <img src="@Model.ImageUrl" alt="@Model.Name" class="img-fluid rounded-3" style="max-height: 440px; object-fit: contain;" />
+                    @if (Model.DiscountPercent > 0)
+                    {
+                        <span class="badge bg-danger rounded-pill fw-bold position-absolute top-0 start-0 m-3 px-3 py-2">
+                            @Model.DiscountPercent% OFF
+                        </span>
+                    }
+                </div>
+            </div>
+
+            <!-- Product Purchase Info -->
+            <div class="col-lg-6">
+                <div class="d-flex align-items-center gap-2 mb-2">
+                    <span class="badge bg-light text-muted border text-uppercase tracking-wider">@Model.Brand</span>
+                    <span class="small text-muted mono-font">SKU: @Model.SKU</span>
+                </div>
+
+                <h2 class="fw-bold text-dark mb-2">@Model.Name</h2>
+
+                <!-- Rating Strip -->
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <div class="text-warning small">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            <i class="bi @(i <= Math.Round(Model.Rating) ? "bi-star-fill" : "bi-star")"></i>
+                        }
+                    </div>
+                    <span class="fw-bold small text-dark">@Model.Rating</span>
+                    <span class="text-muted small">&bull; @Model.ReviewCount verified customer reviews</span>
+                </div>
+
+                <!-- Price Breakdown -->
+                <div class="p-3 bg-light rounded-3 border mb-4">
+                    <div class="d-flex align-items-baseline gap-2">
+                        <span class="display-6 fw-extrabold text-success">₹@Model.Price.ToString("0.00")</span>
+                        @if (Model.OriginalPrice > Model.Price)
+                        {
+                            <span class="fs-5 text-muted text-decoration-line-through">₹@Model.OriginalPrice.ToString("0.00")</span>
+                            <span class="badge bg-success-subtle text-success border border-success-subtle fw-bold">
+                                You Save ₹@((Model.OriginalPrice - Model.Price).ToString("0.00"))
+                            </span>
+                        }
+                    </div>
+                    <small class="text-muted d-block mt-1">Inclusive of all taxes &bull; Eligible for Free Standard Shipping</small>
+                </div>
+
+                <p class="text-muted mb-4">@Model.ShortDescription</p>
+
+                <!-- Stock Indicator -->
+                <div class="mb-4">
+                    @if (Model.InStock)
+                    {
+                        <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2 rounded-pill fw-semibold">
+                            <i class="bi bi-check-circle-fill me-1"></i> In Stock (@Model.StockQuantity units ready to ship)
+                        </span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger-subtle text-danger border border-danger-subtle px-3 py-2 rounded-pill fw-semibold">
+                            <i class="bi bi-x-circle-fill me-1"></i> Out of Stock
+                        </span>
+                    }
+                </div>
+
+                <!-- Add to Cart Form -->
+                <form asp-controller="Cart" asp-action="AddToCart" method="post" class="mb-4">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="productId" value="@Model.Id" />
+
+                    <div class="d-flex gap-3 align-items-center">
+                        <div style="width: 110px;">
+                            <label class="form-label small fw-semibold text-muted mb-1">Quantity</label>
+                            <input type="number" name="quantity" value="1" min="1" max="@Model.StockQuantity" class="form-control text-center fw-bold" @(!Model.InStock ? "disabled" : "") />
+                        </div>
+                        <div class="flex-grow-1 align-self-end">
+                            <button type="submit" class="btn btn-success btn-lg w-100 shadow d-flex align-items-center justify-content-center gap-2" @(!Model.InStock ? "disabled" : "")>
+                                <i class="bi bi-cart-plus-fill"></i> Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Value Guarantees -->
+                <div class="row g-2 border-top pt-3 small text-muted">
+                    <div class="col-sm-6 d-flex align-items-center gap-2">
+                        <i class="bi bi-truck text-success fs-5"></i> Dispatch within 24 hours
+                    </div>
+                    <div class="col-sm-6 d-flex align-items-center gap-2">
+                        <i class="bi bi-arrow-repeat text-success fs-5"></i> 7-Day Replacement Policy
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Full Description Tabs -->
+        <div class="mt-5 pt-4 border-top">
+            <h4 class="fw-bold mb-3 text-dark">Product Specifications &amp; Overview</h4>
+            <div class="p-4 bg-light rounded-3 text-muted">
+                @Model.Description
+            </div>
+        </div>
+    </div>
+
+    <!-- Customer Reviews Section -->
+    <div class="card border-0 shadow-sm p-4 p-md-5 bg-white mb-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="fw-bold mb-0 text-dark"><i class="bi bi-chat-left-heart text-success me-2"></i>Customer Reviews &amp; Ratings</h4>
+            <span class="badge bg-success fs-6 px-3 py-1 rounded-pill">@Model.Rating / 5.0</span>
+        </div>
+
+        <div class="row g-4">
+            <!-- Review List -->
+            <div class="col-lg-7">
+                @if (!Model.Reviews.Any())
+                {
+                    <div class="p-4 text-center text-muted bg-light rounded-3">
+                        <i class="bi bi-chat-square-text fs-2 d-block mb-2"></i>
+                        <span>No reviews yet. Be the first to share your experience with this product!</span>
+                    </div>
+                }
+                else
+                {
+                    <div class="d-flex flex-column gap-3">
+                        @foreach (var r in Model.Reviews)
+                        {
+                            <div class="p-3 bg-light rounded-3 border">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="fw-bold text-dark small">@r.User.FullName</span>
+                                    <div class="text-warning small">
+                                        @for (int i = 1; i <= 5; i++)
+                                        {
+                                            <i class="bi @(i <= r.Rating ? "bi-star-fill" : "bi-star")"></i>
+                                        }
+                                    </div>
+                                </div>
+                                <p class="small text-muted mb-1">@r.Comment</p>
+                                <span class="text-muted" style="font-size: 11px;">Verified Purchase &bull; @r.CreatedAt.ToString("dd MMM yyyy")</span>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+
+            <!-- Submit Review Form -->
+            <div class="col-lg-5">
+                <div class="card border bg-light p-4 rounded-4">
+                    <h5 class="fw-bold text-dark mb-2">Write a Review</h5>
+                    <p class="small text-muted mb-3">Share your genuine thoughts to help fellow students and shoppers.</p>
+
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <form asp-controller="Shop" asp-action="AddReview" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="productId" value="@Model.Id" />
+
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">Star Rating</label>
+                                <select name="rating" class="form-select form-select-sm">
+                                    <option value="5" selected>⭐⭐⭐⭐⭐ (5/5 Excellent)</option>
+                                    <option value="4">⭐⭐⭐⭐ (4/5 Very Good)</option>
+                                    <option value="3">⭐⭐⭐ (3/5 Average)</option>
+                                    <option value="2">⭐⭐ (2/5 Below Average)</option>
+                                    <option value="1">⭐ (1/5 Poor)</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label small fw-bold">Your Feedback</label>
+                                <textarea name="comment" rows="3" class="form-control form-control-sm" placeholder="What did you like or dislike about this product?" required></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-success btn-sm w-100 rounded-pill">
+                                Submit Review
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <div class="alert alert-info border-0 p-3 small mb-0 rounded-3">
+                            Please <a asp-controller="Account" asp-action="Login" class="fw-bold">Sign In</a> to submit a verified customer review.
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

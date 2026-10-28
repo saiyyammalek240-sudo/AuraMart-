@@ -1,0 +1,257 @@
+@model ParkEasePro.Models.ViewModels.HomeViewModel
+@{
+    ViewData["Title"] = "Premium Lifestyle & Tech Essentials";
+}
+
+<!-- Hero Banner (UI/UX Pro Max Feature Showcase) -->
+<section class="hero-gradient py-5 position-relative overflow-hidden border-bottom">
+    <div class="container py-4">
+        <div class="row align-items-center gy-5">
+            <div class="col-lg-7 text-center text-lg-start">
+                <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill bg-success-subtle text-success border border-success-subtle small fw-bold mb-3">
+                    <span class="badge bg-success rounded-pill">SUMMER '26</span>
+                    <span>New Generation Smart Tech &amp; Acoustics</span>
+                </div>
+                <h1 class="display-4 fw-extrabold text-dark tracking-tight mb-3">
+                    Curated Lifestyle Tech. <span class="text-success">Delivered to Your Door.</span>
+                </h1>
+                <p class="lead text-muted mb-4 pe-lg-4">
+                    Explore studio-grade wireless acoustics, custom mechanical keyboards, ergonomic desk setups, and minimalist footwear handcrafted for modern creators.
+                </p>
+                <div class="d-flex flex-wrap gap-3 justify-content-center justify-content-lg-start">
+                    <a asp-controller="Shop" asp-action="Index" class="btn btn-success btn-lg shadow d-flex align-items-center gap-2 px-4 rounded-pill">
+                        <i class="bi bi-bag-check-fill"></i> Shop All Collections
+                    </a>
+                    <a href="#featured-deals" class="btn btn-outline-secondary btn-lg d-flex align-items-center gap-2 px-4 rounded-pill">
+                        <i class="bi bi-tag-fill text-warning"></i> View Today's Deals
+                    </a>
+                </div>
+
+
+            </div>
+
+            <div class="col-lg-5 text-center">
+                <div class="position-relative">
+                    <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=700&q=80"
+                         alt="Featured Headphones" class="img-fluid rounded-4 shadow-lg" style="max-height: 380px; object-fit: cover;" />
+                    <div class="card border-0 shadow-lg position-absolute bottom-0 start-0 translate-middle-y bg-white p-3 rounded-4 text-start ms-2 mb-2 d-none d-sm-block">
+                        <span class="badge bg-danger-subtle text-danger fw-bold rounded-pill mb-1">LIMITED OFFER</span>
+                        <div class="fw-bold text-dark small">SonicPro X7 Studio Edition</div>
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="fw-bold text-success">₹6,499</span>
+                            <span class="text-muted text-decoration-line-through small">₹8,999</span>
+                            <span class="badge bg-warning text-dark small">-28%</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Value Props Strip -->
+<section class="py-4 bg-white border-bottom">
+    <div class="container">
+        <div class="row g-4 text-center">
+            <div class="col-6 col-md-3">
+                <div class="d-flex align-items-center justify-content-center gap-2">
+                    <i class="bi bi-truck fs-3 text-success"></i>
+                    <div class="text-start">
+                        <span class="fw-bold d-block small text-dark">Free Delivery</span>
+                        <span class="text-muted" style="font-size: 12px;">Orders above ₹999</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="d-flex align-items-center justify-content-center gap-2">
+                    <i class="bi bi-shield-check fs-3 text-success"></i>
+                    <div class="text-start">
+                        <span class="fw-bold d-block small text-dark">2-Year Warranty</span>
+                        <span class="text-muted" style="font-size: 12px;">100% Genuine Gear</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="d-flex align-items-center justify-content-center gap-2">
+                    <i class="bi bi-arrow-repeat fs-3 text-success"></i>
+                    <div class="text-start">
+                        <span class="fw-bold d-block small text-dark">7-Day Returns</span>
+                        <span class="text-muted" style="font-size: 12px;">Hassle-free exchange</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="d-flex align-items-center justify-content-center gap-2">
+                    <i class="bi bi-credit-card-2-front fs-3 text-success"></i>
+                    <div class="text-start">
+                        <span class="fw-bold d-block small text-dark">Secure Payments</span>
+                        <span class="text-muted" style="font-size: 12px;">UPI, Cards &amp; COD</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Category Pills Section -->
+<section class="py-5">
+    <div class="container py-2">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <span class="text-success text-uppercase fw-bold small tracking-wider">Browse by Category</span>
+                <h3 class="fw-bold text-dark mb-0">Shop by Department</h3>
+            </div>
+            <a asp-controller="Shop" asp-action="Index" class="btn btn-outline-success btn-sm rounded-pill px-3">
+                All Collections <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+
+        <div class="row g-3">
+            @foreach (var cat in Model.Categories)
+            {
+                <div class="col-sm-6 col-lg-3">
+                    <a asp-controller="Shop" asp-action="Index" asp-route-categoryId="@cat.Id" class="category-pill-card">
+                        <div class="rounded-3 bg-success-subtle text-success d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; min-width: 48px;">
+                            <i class="bi @cat.IconClass fs-4"></i>
+                        </div>
+                        <div>
+                            <span class="fw-bold d-block">@cat.Name</span>
+                            <span class="small text-muted">@cat.Products.Count Products</span>
+                        </div>
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- Featured Products Section -->
+<section class="py-5 bg-white border-top border-bottom" id="featured-deals">
+    <div class="container py-2">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <span class="text-success text-uppercase fw-bold small tracking-wider">Editor's Pick</span>
+                <h3 class="fw-bold text-dark mb-0">Featured Essentials</h3>
+            </div>
+            <a asp-controller="Shop" asp-action="Index" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+                View All
+            </a>
+        </div>
+
+        <div class="row g-4">
+            @foreach (var p in Model.FeaturedProducts)
+            {
+                <div class="col-sm-6 col-lg-3">
+                    <div class="product-card">
+                        <div class="product-img-wrapper">
+                            <img src="@p.ImageUrl" alt="@p.Name" loading="lazy" />
+                            <div class="product-badge-strip">
+                                @if (p.DiscountPercent > 0)
+                                {
+                                    <span class="badge bg-danger rounded-pill fw-bold">@p.DiscountPercent% OFF</span>
+                                }
+                                @if (p.IsTrending)
+                                {
+                                    <span class="badge bg-primary rounded-pill fw-bold">TRENDING</span>
+                                }
+                            </div>
+                        </div>
+
+                        <div class="p-3 d-flex flex-column flex-grow-1">
+                            <span class="small text-muted text-uppercase fw-semibold" style="font-size: 11px;">@p.Brand</span>
+                            <h6 class="fw-bold text-dark mb-1 text-truncate">
+                                <a asp-controller="Shop" asp-action="Details" asp-route-id="@p.Id" class="text-decoration-none text-dark">
+                                    @p.Name
+                                </a>
+                            </h6>
+
+                            <div class="d-flex align-items-center gap-1 mb-2">
+                                <span class="text-warning small"><i class="bi bi-star-fill"></i> @p.Rating</span>
+                                <span class="text-muted small" style="font-size: 11px;">(@p.ReviewCount reviews)</span>
+                            </div>
+
+                            <div class="mt-auto pt-2 border-top d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="fs-5 fw-extrabold text-success">₹@p.Price.ToString("0.00")</span>
+                                    @if (p.OriginalPrice > p.Price)
+                                    {
+                                        <span class="text-muted text-decoration-line-through small ms-1" style="font-size: 12px;">₹@p.OriginalPrice.ToString("0.00")</span>
+                                    }
+                                </div>
+                                <form asp-controller="Cart" asp-action="AddToCart" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="productId" value="@p.Id" />
+                                    <button type="submit" class="btn btn-outline-success btn-sm rounded-circle p-0 d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;" title="Add to Cart">
+                                        <i class="bi bi-cart-plus-fill fs-6"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<!-- Trending & Hot Deals -->
+<section class="py-5 bg-light">
+    <div class="container py-2">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <span class="text-danger text-uppercase fw-bold small tracking-wider">Flash Discounts</span>
+                <h3 class="fw-bold text-dark mb-0">Trending On-Sale Deals</h3>
+            </div>
+            <a asp-controller="Shop" asp-action="Index" class="btn btn-outline-danger btn-sm rounded-pill px-3">
+                See All Deals
+            </a>
+        </div>
+
+        <div class="row g-4">
+            @foreach (var p in Model.TrendingProducts)
+            {
+                <div class="col-sm-6 col-lg-3">
+                    <div class="product-card">
+                        <div class="product-img-wrapper">
+                            <img src="@p.ImageUrl" alt="@p.Name" loading="lazy" />
+                            <div class="product-badge-strip">
+                                <span class="badge bg-danger rounded-pill fw-bold">HOT DEAL</span>
+                            </div>
+                        </div>
+
+                        <div class="p-3 d-flex flex-column flex-grow-1">
+                            <span class="small text-muted text-uppercase fw-semibold" style="font-size: 11px;">@p.Brand</span>
+                            <h6 class="fw-bold text-dark mb-1 text-truncate">
+                                <a asp-controller="Shop" asp-action="Details" asp-route-id="@p.Id" class="text-decoration-none text-dark">
+                                    @p.Name
+                                </a>
+                            </h6>
+
+                            <div class="d-flex align-items-center gap-1 mb-2">
+                                <span class="text-warning small"><i class="bi bi-star-fill"></i> @p.Rating</span>
+                                <span class="text-muted small" style="font-size: 11px;">(@p.ReviewCount)</span>
+                            </div>
+
+                            <div class="mt-auto pt-2 border-top d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span class="fs-5 fw-extrabold text-success">₹@p.Price.ToString("0.00")</span>
+                                    @if (p.OriginalPrice > p.Price)
+                                    {
+                                        <span class="text-muted text-decoration-line-through small ms-1" style="font-size: 12px;">₹@p.OriginalPrice.ToString("0.00")</span>
+                                    }
+                                </div>
+                                <form asp-controller="Cart" asp-action="AddToCart" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="productId" value="@p.Id" />
+                                    <button type="submit" class="btn btn-success btn-sm rounded-circle p-0 d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;" title="Add to Cart">
+                                        <i class="bi bi-cart-plus-fill fs-6"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>

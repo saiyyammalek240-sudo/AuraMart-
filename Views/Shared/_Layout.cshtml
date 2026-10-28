@@ -1,0 +1,207 @@
+@using Microsoft.AspNetCore.Identity
+@using ParkEasePro.Data
+@using System.Security.Claims
+@inject ApplicationDbContext DbContext
+@{
+    string? userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    int cartCount = 0;
+    try
+    {
+        if (!string.IsNullOrEmpty(userId))
+        {
+            cartCount = DbContext.CartItems.Where(c => c.UserId == userId).Sum(c => c.Quantity);
+        }
+        else if (Context.Request.Cookies.TryGetValue("AuraMart_CartId", out var cartId) && !string.IsNullOrEmpty(cartId))
+        {
+            cartCount = DbContext.CartItems.Where(c => c.SessionCartId == cartId).Sum(c => c.Quantity);
+        }
+    }
+    catch { }
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - AuraMart | Modern Lifestyle &amp; Tech Store</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+    
+    <!-- Bootstrap Icons (Modern SVG Iconography, no raw emoji) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    
+    <!-- Custom UI/UX Pro Max CSS -->
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="d-flex flex-column min-vh-100">
+    <!-- Top Utility Announcement Bar -->
+    <div class="bg-dark text-white py-1 px-3 small text-center d-flex justify-content-between align-items-center">
+        <span class="d-none d-md-inline text-white-50"><i class="bi bi-shield-check text-success me-1"></i> 100% Genuine Certified Tech &amp; Lifestyle Gear</span>
+        <span class="mx-auto mx-md-0"><i class="bi bi-tag-fill text-warning me-1"></i> Use code <strong>SAVE20</strong> for 20% OFF on all orders above ₹1000!</span>
+        <span class="d-none d-md-inline text-white-50"><i class="bi bi-truck text-info me-1"></i> Free Standard Shipping on ₹999+</span>
+    </div>
+
+    <!-- Main Navigation Bar -->
+    <header class="sticky-top bg-white border-bottom shadow-sm">
+        <nav class="navbar navbar-expand-lg navbar-light py-2">
+            <div class="container">
+                <a class="navbar-brand d-flex align-items-center gap-2" asp-controller="Home" asp-action="Index">
+                    <div class="rounded-3 bg-success text-white d-flex align-items-center justify-content-center shadow-sm" style="width: 36px; height: 36px;">
+                        <i class="bi bi-bag-check-fill fs-5"></i>
+                    </div>
+                    <span>Aura<span class="text-dark">Mart</span></span>
+                </a>
+
+                <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarMain">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3 gap-1">
+                        <li class="nav-item">
+                            <a class="nav-link px-2 d-flex align-items-center gap-1" asp-controller="Home" asp-action="Index">
+                                <i class="bi bi-house"></i> Home
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link px-2 d-flex align-items-center gap-1 fw-semibold text-success" asp-controller="Shop" asp-action="Index">
+                                <i class="bi bi-grid-fill text-success"></i> All Products
+                            </a>
+                        </li>
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link px-2 d-flex align-items-center gap-1" asp-controller="Orders" asp-action="Index">
+                                    <i class="bi bi-box-seam"></i> My Orders
+                                </a>
+                            </li>
+                        }
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link px-2 d-flex align-items-center gap-1 text-danger fw-semibold" asp-controller="Admin" asp-action="Dashboard">
+                                    <i class="bi bi-speedometer2"></i> Admin Portal
+                                </a>
+                            </li>
+                        }
+                    </ul>
+
+                    <!-- Search Box -->
+                    <form class="d-flex me-lg-3 mb-2 mb-lg-0" asp-controller="Shop" asp-action="Index" method="get">
+                        <div class="input-group input-group-sm">
+                            <input class="form-control rounded-start-pill ps-3" type="search" name="q" placeholder="Search gadgets, audio, shoes..." style="width: 220px;">
+                            <button class="btn btn-outline-secondary rounded-end-pill px-3" type="submit">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </form>
+
+                    <!-- Cart Icon & User Controls -->
+                    <div class="d-flex align-items-center gap-3">
+                        <a asp-controller="Cart" asp-action="Index" class="btn btn-light position-relative border rounded-pill px-3 py-1 d-flex align-items-center gap-2">
+                            <i class="bi bi-cart3 fs-5 text-dark"></i>
+                            <span class="d-none d-sm-inline fw-semibold small text-dark">Cart</span>
+                            <span class="badge rounded-pill bg-success text-white" id="cartCountBadge">@cartCount</span>
+                        </a>
+
+                        <partial name="_LoginPartial" />
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Toast Notifications Feedback System -->
+    <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1090;">
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="toast align-items-center text-bg-success border-0 show shadow-lg" role="alert">
+                <div class="d-flex">
+                    <div class="toast-body d-flex align-items-center gap-2">
+                        <i class="bi bi-check-circle-fill fs-5"></i>
+                        <span>@TempData["SuccessMessage"]</span>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="toast align-items-center text-bg-danger border-0 show shadow-lg" role="alert">
+                <div class="d-flex">
+                    <div class="toast-body d-flex align-items-center gap-2">
+                        <i class="bi bi-exclamation-triangle-fill fs-5"></i>
+                        <span>@TempData["ErrorMessage"]</span>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Main View Content -->
+    <main role="main" class="flex-grow-1">
+        @RenderBody()
+    </main>
+
+    <!-- Professional E-Commerce Footer -->
+    <footer class="bg-white border-top mt-auto pt-5 pb-4 text-muted">
+        <div class="container">
+            <div class="row g-4 mb-4">
+                <div class="col-lg-4">
+                    <div class="d-flex align-items-center gap-2 mb-2">
+                        <div class="rounded-3 bg-success text-white d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                            <i class="bi bi-bag-check-fill fs-6"></i>
+                        </div>
+                        <h5 class="fw-bold text-dark mb-0">AuraMart</h5>
+                    </div>
+                    <p class="small text-muted mb-3 pe-lg-4">
+                        Premium lifestyle and tech essentials. Built with ASP.NET Core 8.0 MVC &amp; Entity Framework Core for 5th Semester Web Technologies.
+                    </p>
+                    <div class="d-flex gap-2">
+                        <span class="badge bg-light text-dark border"><i class="bi bi-lock-fill text-success"></i> 256-bit SSL</span>
+                        <span class="badge bg-light text-dark border"><i class="bi bi-arrow-repeat text-primary"></i> 7-Day Returns</span>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-2">
+                    <h6 class="fw-bold text-dark small text-uppercase tracking-wider mb-3">Shop Collections</h6>
+                    <ul class="list-unstyled small d-flex flex-column gap-2 mb-0">
+                        <li><a asp-controller="Shop" asp-action="Index" class="text-decoration-none text-muted">All Products</a></li>
+                        <li><a asp-controller="Shop" asp-action="Index" asp-route-categoryId="1" class="text-decoration-none text-muted">Smart Electronics</a></li>
+                        <li><a asp-controller="Shop" asp-action="Index" asp-route-categoryId="2" class="text-decoration-none text-muted">Hi-Fi Audio</a></li>
+                        <li><a asp-controller="Shop" asp-action="Index" asp-route-categoryId="3" class="text-decoration-none text-muted">Desk Setup</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-lg-2">
+                    <h6 class="fw-bold text-dark small text-uppercase tracking-wider mb-3">Customer Care</h6>
+                    <ul class="list-unstyled small d-flex flex-column gap-2 mb-0">
+                        <li><a asp-controller="Orders" asp-action="Index" class="text-decoration-none text-muted">Track Order</a></li>
+                        <li><a asp-controller="Home" asp-action="About" class="text-decoration-none text-muted">About Store</a></li>
+                        <li><a asp-controller="Home" asp-action="Contact" class="text-decoration-none text-muted">Help &amp; Support</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4">
+                    <h6 class="fw-bold text-dark small text-uppercase tracking-wider mb-3">Stay Connected</h6>
+                    <p class="text-muted small mb-2">Subscribe to receive exclusive launches, flash tech discounts, and member rewards.</p>
+                    <div class="d-flex gap-2">
+                        <input type="email" class="form-control form-control-sm rounded-pill" placeholder="Enter your email...">
+                        <button class="btn btn-success btn-sm rounded-pill px-3" type="button">Join</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="border-top pt-3 d-flex flex-wrap justify-content-between align-items-center small text-muted">
+                <span>&copy; @DateTime.UtcNow.Year AuraMart Inc. All rights reserved.</span>
+                <span>Supported Payments: UPI &bull; Visa &bull; Mastercard &bull; RuPay &bull; NetBanking</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 & Chart.js Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

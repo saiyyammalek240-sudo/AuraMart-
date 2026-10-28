@@ -1,0 +1,172 @@
+@model ParkEasePro.Models.ViewModels.CartViewModel
+@{
+    ViewData["Title"] = "Your Shopping Cart";
+}
+
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1"><i class="bi bi-cart3 text-success me-2"></i>Shopping Cart</h2>
+            <p class="text-muted small mb-0">Review your selected items before proceeding to checkout.</p>
+        </div>
+        <a asp-controller="Shop" asp-action="Index" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+            <i class="bi bi-arrow-left"></i> Continue Shopping
+        </a>
+    </div>
+
+    @if (!Model.Items.Any())
+    {
+        <div class="card border-0 shadow-sm p-5 text-center my-4 bg-white">
+            <div class="rounded-circle bg-light text-muted mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; font-size: 2.5rem;">
+                <i class="bi bi-cart-x"></i>
+            </div>
+            <h4 class="fw-bold text-dark">Your cart is currently empty</h4>
+            <p class="text-muted small">Explore our collections and discover exceptional tech and lifestyle products.</p>
+            <div>
+                <a asp-controller="Shop" asp-action="Index" class="btn btn-success rounded-pill px-4">
+                    Start Shopping Now
+                </a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            <!-- Items Table List -->
+            <div class="col-lg-8">
+                <div class="card border-0 shadow-sm p-4 bg-white">
+                    <div class="table-responsive">
+                        <table class="table align-middle mb-0">
+                            <thead class="table-light small">
+                                <tr>
+                                    <th>Product</th>
+                                    <th>Price</th>
+                                    <th class="text-center">Quantity</th>
+                                    <th class="text-end">Subtotal</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.Items)
+                                {
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center gap-3">
+                                                <img src="@item.Product.ImageUrl" alt="@item.Product.Name" class="rounded-3 border" style="width: 60px; height: 60px; object-fit: cover;" />
+                                                <div>
+                                                    <h6 class="fw-bold text-dark mb-0">
+                                                        <a asp-controller="Shop" asp-action="Details" asp-route-id="@item.ProductId" class="text-decoration-none text-dark">
+                                                            @item.Product.Name
+                                                        </a>
+                                                    </h6>
+                                                    <span class="small text-muted">@item.Product.Category.Name</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="fw-semibold text-dark">₹@item.UnitPrice.ToString("0.00")</td>
+                                        <td class="text-center">
+                                            <div class="d-inline-flex align-items-center border rounded-pill px-2 py-1 bg-light">
+                                                <form asp-action="UpdateQuantity" method="post" class="d-inline">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="cartItemId" value="@item.Id" />
+                                                    <input type="hidden" name="change" value="-1" />
+                                                    <button type="submit" class="btn btn-link p-0 text-dark" style="text-decoration: none;">
+                                                        <i class="bi bi-dash"></i>
+                                                    </button>
+                                                </form>
+
+                                                <span class="fw-bold px-3 small">@item.Quantity</span>
+
+                                                <form asp-action="UpdateQuantity" method="post" class="d-inline">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="cartItemId" value="@item.Id" />
+                                                    <input type="hidden" name="change" value="1" />
+                                                    <button type="submit" class="btn btn-link p-0 text-dark" style="text-decoration: none;" @(item.Quantity >= item.Product.StockQuantity ? "disabled" : "")>
+                                                        <i class="bi bi-plus"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                        <td class="text-end fw-extrabold text-success">
+                                            ₹@item.SubTotal.ToString("0.00")
+                                        </td>
+                                        <td class="text-end">
+                                            <form asp-action="Remove" method="post" class="d-inline">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="cartItemId" value="@item.Id" />
+                                                <button type="submit" class="btn btn-link text-danger p-0" title="Remove item">
+                                                    <i class="bi bi-trash3 fs-6"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Summary & Coupon Sidebar -->
+            <div class="col-lg-4">
+                <!-- Promo Code Box -->
+                <div class="card border-0 shadow-sm p-4 bg-white mb-3">
+                    <h6 class="fw-bold text-dark mb-2"><i class="bi bi-tag-fill text-warning me-1"></i> Have a Promo Code?</h6>
+                    <form asp-action="ApplyCoupon" method="post" class="d-flex gap-2 mb-2">
+                        @Html.AntiForgeryToken()
+                        <input type="text" name="couponCode" value="@Model.AppliedCouponCode" class="form-control form-control-sm text-uppercase mono-font fw-bold" placeholder="e.g. SAVE20" required />
+                        <button type="submit" class="btn btn-dark btn-sm rounded-pill px-3">
+                            Apply
+                        </button>
+                    </form>
+                    <span class="small text-muted" style="font-size: 11px;">Try demo code <code>SAVE20</code> (20% off) or <code>STUDENT50</code>.</span>
+                </div>
+
+                <!-- Order Calculation -->
+                <div class="card border-0 shadow-sm p-4 bg-white">
+                    <h5 class="fw-bold text-dark mb-3">Order Summary</h5>
+
+                    <div class="d-flex justify-content-between mb-2 small">
+                        <span class="text-muted">Subtotal (@Model.TotalQuantity items):</span>
+                        <span class="fw-semibold text-dark">₹@Model.SubTotal.ToString("0.00")</span>
+                    </div>
+
+                    @if (Model.DiscountAmount > 0)
+                    {
+                        <div class="d-flex justify-content-between mb-2 small text-success">
+                            <span>Promo Discount (@Model.AppliedCouponCode):</span>
+                            <span class="fw-bold">- ₹@Model.DiscountAmount.ToString("0.00")</span>
+                        </div>
+                    }
+
+                    <div class="d-flex justify-content-between mb-3 small">
+                        <span class="text-muted">Standard Shipping:</span>
+                        @if (Model.ShippingFee == 0)
+                        {
+                            <span class="text-success fw-bold">FREE</span>
+                        }
+                        else
+                        {
+                            <span class="fw-semibold text-dark">₹@Model.ShippingFee.ToString("0.00")</span>
+                        }
+                    </div>
+
+                    <hr class="my-3" />
+
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <span class="fw-bold text-dark fs-5">Estimated Total:</span>
+                        <span class="display-6 fw-extrabold text-success fs-3">₹@Model.GrandTotal.ToString("0.00")</span>
+                    </div>
+
+                    <a asp-controller="Checkout" asp-action="Index" class="btn btn-success btn-lg w-100 rounded-pill shadow d-flex align-items-center justify-content-center gap-2">
+                        Proceed to Checkout <i class="bi bi-arrow-right"></i>
+                    </a>
+
+                    <div class="text-center mt-3 small text-muted">
+                        <i class="bi bi-shield-lock-fill text-success"></i> 256-bit Encrypted Checkout
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

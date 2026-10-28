@@ -1,0 +1,80 @@
+@model List<ParkEasePro.Models.Order>
+@{
+    ViewData["Title"] = "Fulfillment & Order Management";
+}
+
+<div class="container py-4">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+        <div>
+            <h2 class="fw-bold mb-1"><i class="bi bi-receipt text-success me-2"></i>Order Fulfillment Desk</h2>
+            <p class="text-muted small mb-0">Total of @Model.Count orders placed by customers.</p>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Dashboard" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+                <i class="bi bi-arrow-left"></i> Dashboard
+            </a>
+            <a asp-action="ExportOrdersCsv" class="btn btn-success btn-sm rounded-pill px-3 shadow-sm">
+                <i class="bi bi-download me-1"></i> Download Orders CSV
+            </a>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm p-4 bg-white">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0 small">
+                <thead class="table-light">
+                    <tr>
+                        <th>Order #</th>
+                        <th>Customer / Contact</th>
+                        <th>Date</th>
+                        <th>Items Count</th>
+                        <th>Total Paid</th>
+                        <th>Payment Method</th>
+                        <th>Fulfillment Status</th>
+                        <th>Change Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var o in Model)
+                    {
+                        <tr>
+                            <td class="mono-font fw-bold">@o.OrderNumber</td>
+                            <td>
+                                <span class="fw-semibold text-dark">@o.ShippingFullName</span>
+                                <small class="d-block text-muted">@o.ShippingCity &bull; @o.ShippingPhone</small>
+                            </td>
+                            <td>@o.OrderDate.ToString("dd MMM yyyy, hh:mm tt")</td>
+                            <td>@o.Items.Count items</td>
+                            <td class="fw-bold text-success">₹@o.GrandTotal.ToString("0.00")</td>
+                            <td><span class="badge bg-light text-dark border">@o.PaymentMethod</span></td>
+                            <td>
+                                <span class="badge @(o.Status == ParkEasePro.Models.OrderStatus.Delivered ? "bg-success" : o.Status == ParkEasePro.Models.OrderStatus.Shipped ? "bg-info text-dark" : "bg-warning text-dark")">
+                                    @o.Status
+                                </span>
+                            </td>
+                            <td>
+                                <form asp-action="UpdateOrderStatus" method="post" class="d-flex align-items-center gap-1">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="orderId" value="@o.Id" />
+                                    <select name="status" class="form-select form-select-sm" style="width: 120px;" onchange="this.form.submit()">
+                                        <option value="Placed" selected="@(o.Status == ParkEasePro.Models.OrderStatus.Placed)">Placed</option>
+                                        <option value="Processing" selected="@(o.Status == ParkEasePro.Models.OrderStatus.Processing)">Processing</option>
+                                        <option value="Shipped" selected="@(o.Status == ParkEasePro.Models.OrderStatus.Shipped)">Shipped</option>
+                                        <option value="Delivered" selected="@(o.Status == ParkEasePro.Models.OrderStatus.Delivered)">Delivered</option>
+                                        <option value="Cancelled" selected="@(o.Status == ParkEasePro.Models.OrderStatus.Cancelled)">Cancelled</option>
+                                    </select>
+                                </form>
+                            </td>
+                            <td>
+                                <a asp-controller="Orders" asp-action="Invoice" asp-route-id="@o.Id" class="btn btn-outline-secondary btn-sm py-0">
+                                    Invoice
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

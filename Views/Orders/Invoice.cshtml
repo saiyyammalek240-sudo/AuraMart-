@@ -1,0 +1,110 @@
+@model ParkEasePro.Models.Order
+@{
+    ViewData["Title"] = $"Tax Invoice - {Model.OrderNumber}";
+}
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4 no-print max-w-xl mx-auto" style="max-width: 800px;">
+        <a asp-action="Index" class="btn btn-outline-secondary btn-sm rounded-pill px-3">
+            <i class="bi bi-arrow-left"></i> My Orders
+        </a>
+        <button onclick="window.print()" class="btn btn-success btn-sm rounded-pill px-3 shadow-sm">
+            <i class="bi bi-printer me-1"></i> Print / Save as PDF
+        </button>
+    </div>
+
+    <div class="card border p-4 p-md-5 mx-auto bg-white shadow-sm" style="max-width: 800px;">
+        <!-- Header -->
+        <div class="d-flex justify-content-between align-items-start pb-4 border-bottom mb-4">
+            <div>
+                <div class="d-flex align-items-center gap-2 mb-1">
+                    <div class="rounded-3 bg-success text-white d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                        <i class="bi bi-bag-check-fill fs-6"></i>
+                    </div>
+                    <h4 class="fw-bold text-dark mb-0">AuraMart</h4>
+                </div>
+                <small class="text-muted d-block">Official Retail Tax Invoice</small>
+                <small class="text-muted">GSTIN: 24AAACA1234F1Z8</small>
+            </div>
+            <div class="text-end">
+                <span class="small text-muted d-block">INVOICE NUMBER</span>
+                <span class="mono-font fw-extrabold fs-5 text-dark">INV-@Model.OrderNumber</span>
+                <small class="d-block text-muted">Date: @Model.OrderDate.ToString("dd MMM yyyy")</small>
+            </div>
+        </div>
+
+        <!-- Bill To / Ship To -->
+        <div class="row g-4 mb-4 small">
+            <div class="col-6">
+                <span class="fw-bold text-dark text-uppercase d-block mb-1">Billed &amp; Shipped To:</span>
+                <div class="text-muted">
+                    <strong class="text-dark">@Model.ShippingFullName</strong><br />
+                    Phone: @Model.ShippingPhone<br />
+                    @Model.ShippingAddress<br />
+                    @Model.ShippingCity - @Model.ShippingPostalCode
+                </div>
+            </div>
+            <div class="col-6 text-end">
+                <span class="fw-bold text-dark text-uppercase d-block mb-1">Payment Information:</span>
+                <div class="text-muted">
+                    Mode: <strong>@Model.PaymentMethod</strong><br />
+                    Status: <span class="badge bg-success-subtle text-success">@Model.PaymentStatus</span><br />
+                    Transaction: <span class="mono-font">@Model.TransactionId</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Items Table -->
+        <div class="table-responsive mb-4">
+            <table class="table table-bordered small align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>#</th>
+                        <th>Product Description</th>
+                        <th class="text-end">Unit Price</th>
+                        <th class="text-center">Qty</th>
+                        <th class="text-end">Total Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{ int rowNum = 1; }
+                    @foreach (var i in Model.Items)
+                    {
+                        <tr>
+                            <td>@(rowNum++)</td>
+                            <td class="fw-semibold">@i.ProductName</td>
+                            <td class="text-end">₹@i.UnitPrice.ToString("0.00")</td>
+                            <td class="text-center">@i.Quantity</td>
+                            <td class="text-end fw-bold">₹@i.SubTotal.ToString("0.00")</td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="4" class="text-end text-muted">Item Subtotal:</td>
+                        <td class="text-end fw-semibold">₹@Model.SubTotal.ToString("0.00")</td>
+                    </tr>
+                    @if (Model.DiscountAmount > 0)
+                    {
+                        <tr class="text-success">
+                            <td colspan="4" class="text-end">Promotional Discount:</td>
+                            <td class="text-end fw-bold">- ₹@Model.DiscountAmount.ToString("0.00")</td>
+                        </tr>
+                    }
+                    <tr>
+                        <td colspan="4" class="text-end text-muted">Shipping &amp; Logistics:</td>
+                        <td class="text-end">@(Model.ShippingFee == 0 ? "FREE" : "₹" + Model.ShippingFee.ToString("0.00"))</td>
+                    </tr>
+                    <tr class="table-light">
+                        <td colspan="4" class="text-end fw-bold fs-6">Grand Total (INR):</td>
+                        <td class="text-end fw-extrabold text-success fs-5">₹@Model.GrandTotal.ToString("0.00")</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <div class="p-3 bg-light rounded text-center small text-muted">
+            This is a computer-generated tax invoice. No physical signature is required. Thank you for shopping with AuraMart!
+        </div>
+    </div>
+</div>

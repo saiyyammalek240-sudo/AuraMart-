@@ -1,0 +1,123 @@
+@model ParkEasePro.Models.Product
+@{
+    ViewData["Title"] = "Add New Product SKU";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden bg-white">
+                <div class="p-4 bg-success text-white">
+                    <span class="badge bg-white text-success rounded-pill mb-1">Catalog Management</span>
+                    <h3 class="fw-bold mb-0">Add New Product</h3>
+                </div>
+
+                <div class="card-body p-4 p-md-5">
+                    <form asp-action="CreateProduct" method="post">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-8">
+                                <label asp-for="Name" class="form-label small fw-bold text-dark"></label>
+                                <input asp-for="Name" class="form-control" placeholder="e.g. Aura BassPod Studio 2.1 Speaker" required />
+                                <span asp-validation-for="Name" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="CategoryId" class="form-label small fw-bold text-dark">Category</label>
+                                <select asp-for="CategoryId" asp-items="ViewBag.Categories" class="form-select" required></select>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-4">
+                                <label asp-for="Brand" class="form-label small fw-bold text-dark"></label>
+                                <input asp-for="Brand" class="form-control" placeholder="e.g. AuraAudio" required />
+                                <span asp-validation-for="Brand" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="SKU" class="form-label small fw-bold text-dark"></label>
+                                <input asp-for="SKU" class="form-control mono-font" placeholder="e.g. AA-SPK-01" required />
+                                <span asp-validation-for="SKU" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <label asp-for="StockQuantity" class="form-label small fw-bold text-dark"></label>
+                                <input asp-for="StockQuantity" type="number" class="form-control" value="25" required />
+                                <span asp-validation-for="StockQuantity" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label asp-for="Price" class="form-label small fw-bold text-dark"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light">₹</span>
+                                    <input asp-for="Price" type="number" step="1.00" class="form-control" placeholder="Sale price" required />
+                                </div>
+                                <span asp-validation-for="Price" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6">
+                                <label asp-for="OriginalPrice" class="form-label small fw-bold text-dark"></label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light">₹</span>
+                                    <input asp-for="OriginalPrice" type="number" step="1.00" class="form-control" placeholder="MRP" required />
+                                </div>
+                                <span asp-validation-for="OriginalPrice" class="text-danger small"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="ImageUrl" class="form-label small fw-bold text-dark"></label>
+                            <input asp-for="ImageUrl" class="form-control" placeholder="https://images.unsplash.com/..." required />
+                            <span asp-validation-for="ImageUrl" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="ShortDescription" class="form-label small fw-bold text-dark"></label>
+                            <input asp-for="ShortDescription" class="form-control" placeholder="Brief 1-line overview" required />
+                            <span asp-validation-for="ShortDescription" class="text-danger small"></span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Description" class="form-label small fw-bold text-dark"></label>
+                            <textarea asp-for="Description" rows="4" class="form-control" placeholder="Full product specifications..." required></textarea>
+                            <span asp-validation-for="Description" class="text-danger small"></span>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-4">
+                                <div class="form-check form-switch">
+                                    <input asp-for="IsFeatured" class="form-check-input" type="checkbox" />
+                                    <label asp-for="IsFeatured" class="form-check-label small fw-semibold">Featured</label>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="form-check form-switch">
+                                    <input asp-for="IsTrending" class="form-check-input" type="checkbox" />
+                                    <label asp-for="IsTrending" class="form-check-label small fw-semibold">Trending</label>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="form-check form-switch">
+                                    <input asp-for="IsOnSale" class="form-check-input" type="checkbox" checked />
+                                    <label asp-for="IsOnSale" class="form-check-label small fw-semibold">On Sale</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a asp-action="Products" class="btn btn-outline-secondary px-4">Cancel</a>
+                            <button type="submit" class="btn btn-success px-4 shadow">
+                                <i class="bi bi-check2-circle me-1"></i> Save Product
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

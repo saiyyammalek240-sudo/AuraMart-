@@ -1,0 +1,43 @@
+@{
+    ViewData["Title"] = "Contact Customer Support";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm p-4 p-md-5 bg-white">
+                <div class="d-inline-flex align-items-center gap-2 px-3 py-1 rounded-pill bg-success-subtle text-success border border-success-subtle small fw-bold mb-3 align-self-start">
+                    <i class="bi bi-headset"></i> Support Desk
+                </div>
+                <h2 class="fw-bold mb-2 text-dark">Get in Touch with AuraMart</h2>
+                <p class="text-muted mb-4">Have an inquiry regarding tracking, warranty claims, or product availability? Reach our customer care team.</p>
+
+                <form onsubmit="alert('Thank you! Your ticket has been logged with our customer support team.'); return false;">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium small">Full Name</label>
+                            <input type="text" class="form-control" placeholder="Aarav Sharma" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-medium small">Email Address</label>
+                            <input type="email" class="form-control" placeholder="aarav@campus.edu" required />
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-medium small">Order Number (Optional)</label>
+                            <input type="text" class="form-control mono-font" placeholder="e.g. AUR-2026-X8921" />
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-medium small">Your Message / Inquiry</label>
+                            <textarea class="form-control" rows="4" placeholder="How can we help you today?" required></textarea>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-success px-4 rounded-pill">
+                                <i class="bi bi-send-fill me-1"></i> Send Message
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
